@@ -1,2 +1,2 @@
-# DSA-Java
-Learn DSA With Java
+# JavaCore
+Learn Java Core Concepts
