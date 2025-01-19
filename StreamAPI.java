@@ -1,7 +1,5 @@
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 // https://www.geeksforgeeks.org/stream-in-java/
 // https://www.geeksforgeeks.org/java-collectors/
@@ -50,11 +48,11 @@ public class StreamAPI {
            // findFirst
         Optional<Integer> first = list.stream()
                 .findFirst();
-        System.out.println(first);
+        System.out.println(first.get());
            // findAny
         Optional<Integer> any = list.stream()
                 .findAny();
-        System.out.println(any);
+        System.out.println(any.get());
 
 
         // The peek method is a handy tool for debugging and observing intermediate values within a stream pipeline without affecting the elements themselves.
@@ -66,6 +64,16 @@ public class StreamAPI {
                 .map(n -> n * 2)
                 .peek(n -> System.out.println("Doubled number: " + n))
                 .forEach(System.out::println);
+
+
+        // Count frequency of each character in string
+        String s = "geeks";
+
+        Map<Character, Long> characterCount = s.chars()
+                .mapToObj(c -> (char) c)
+                .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));
+        System.out.println(characterCount);
+        
 
     }
 }
