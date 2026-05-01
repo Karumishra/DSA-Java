@@ -55,16 +55,12 @@ public class CollectorDemo {
         //Get all employees having age > 30
         persons.stream().filter(p->p.getAge()>30).forEach(s->System.out.println(s.getId()));
 
-
         //Find max age
-        persons.stream().max((p1, p2) -> p1.getAge() - p2.getAge()).ifPresent(s->System.out.println(s.getAge()));
-        // Or
         persons.stream().map(Person::getAge).max(Integer::compare).ifPresent(System.out::println);
         // Or
         Person per = persons.stream()
                 .max(Comparator.comparingInt(Person::getAge))
                 .orElse(null);
-
 
         //Find avg age
         double avgAge = persons.stream().collect(Collectors.averagingInt(Person::getAge));
@@ -80,22 +76,8 @@ public class CollectorDemo {
         // Find persons with age between 30 and 40
         persons.stream().filter(p -> p.getAge() > 30 && p.getAge() < 40).forEach(s->System.out.println(s.getId()));
 
-
         // Find maximum age of persons with location New York
         persons.stream().filter(p -> p.getLocation().equals("New York")).map(Person::getAge).max(Integer::compare).ifPresent(System.out::println);
-
-        //Find location where more than one person are living
-        persons.stream().collect(Collectors.groupingBy(Person::getLocation, Collectors.counting()))
-                .entrySet().stream().filter(e -> e.getValue() > 1).forEach(e -> System.out.println(e.getKey()));
-
-        // Or
-        persons.stream()
-                .collect(Collectors.groupingBy(p -> p.location, Collectors.counting()))
-                .entrySet().stream()
-                .filter(entry -> entry.getValue() > 1)
-                .map(Map.Entry::getKey)
-                .toList();
-
 
         //Find all persons with location New York
         persons.stream().filter(p -> p.getLocation().equals("New York")).forEach(s->System.out.println(s.getId()));
@@ -119,7 +101,6 @@ public class CollectorDemo {
         persons.stream().collect(Collectors.groupingBy(Person::getLocation, Collectors.maxBy(Comparator.comparingInt(Person::getAge))))
                 .forEach((location, person) -> System.out.println(location + " : " + person.get().getAge()));
 
-
         //Sort based on Age and Location
         Comparator<Person> comparator1 = Comparator.comparing(Person::getAge);
         Comparator<Person> comparator2 = Comparator.comparing(Person::getLocation);
@@ -127,7 +108,6 @@ public class CollectorDemo {
 
         // Find person based on descending order of age
         persons.stream().sorted(Comparator.comparing(Person::getAge).reversed()).forEach(System.out::println);
-
         // Or
         persons.stream().map(Person::getAge).sorted(Collections.reverseOrder()).forEach(System.out::println);
 
@@ -145,6 +125,24 @@ public class CollectorDemo {
                 .sorted(Comparator.comparing(Person::getAge, Comparator.reverseOrder())
                         .thenComparing(Person::getLocation))
                 .forEach(System.out::println);
+
+        // Find second highest age
+        persons.stream().map(Person::getAge).distinct().sorted(Comparator.reverseOrder()).skip(1).findFirst().ifPresent(System.out::println);
+
+        // Find nth highest age
+        int n = 3;
+        persons.stream().map(Person::getAge).distinct().sorted(Comparator.reverseOrder()).skip(n-1).findFirst().ifPresent(System.out::println);
+
+        //Find location where more than one person are living
+        persons.stream().collect(Collectors.groupingBy(Person::getLocation, Collectors.counting()))
+                .entrySet().stream().filter(e -> e.getValue() > 1).forEach(e -> System.out.println(e.getKey()));
+        // Or
+        persons.stream()
+                .collect(Collectors.groupingBy(p -> p.location, Collectors.counting()))
+                .entrySet().stream()
+                .filter(entry -> entry.getValue() > 1)
+                .map(Map.Entry::getKey)
+                .toList();
 
         //Count Persons in each location
         Map<String, Long> countByLocation = persons.stream()
@@ -191,14 +189,6 @@ public class CollectorDemo {
             System.out.println("Location: " + location);
             person.forEach(System.out::println);
         });
-
-
-        // Find second highest age
-        persons.stream().map(Person::getAge).distinct().sorted(Comparator.reverseOrder()).skip(1).findFirst().ifPresent(System.out::println);
-
-        // Find nth highest age
-        int n = 3;
-        persons.stream().map(Person::getAge).distinct().sorted(Comparator.reverseOrder()).skip(n-1).findFirst().ifPresent(System.out::println);
 
         // Find second highest age in each location
         Map<String, Optional<Person>> secondHighestByLocation = persons.stream()
